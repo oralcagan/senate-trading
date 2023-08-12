@@ -1,0 +1,19 @@
+{
+  "name": "puppeteer-int",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/app.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node build/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/puppeteer": "^7.0.4"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "puppeteer": "^20.8.3"
+  }
+}
