@@ -9,11 +9,11 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "ts-interface-builder": "^0.3.3"
-  },
   "dependencies": {
     "axios": "^1.4.0",
-    "ts-interface-checker": "^1.0.2"
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "ts-to-zod": "^3.1.3"
   }
 }
