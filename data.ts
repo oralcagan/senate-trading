@@ -114,7 +114,12 @@ export class TradeFetcher {
         this.lastTradeCount = lastTradeCount;
     }
 
-    async fetchTradeCount(): Promise<number | null> {
+    /**
+     * Fetches the total number of trades on the CapitolTrades API
+     *
+     * @returns The total number of trades on the CapitolTrades API
+     */
+    public async fetchTradeCount(): Promise<number | null> {
         const res = await axios.get(tradesUrl);
         try {
             //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
@@ -126,7 +131,15 @@ export class TradeFetcher {
         }
     }
 
-    async fetchNPages(n: number): Promise<Trade[]> {
+    /**
+     * Fetches the last N pages of trades from the CapitolTrades API
+     * 
+     * The trades are sorted by date in descending order
+     *
+     * @param n The number of pages to fetch
+     * @returns n pages of trades
+     */
+    private async fetchNPages(n: number): Promise<Trade[]> {
         const trades: Trade[] = [];
         for (let i = 1; i <= n; i++) {
             const res = await axios.get(tradesUrl + "&" + pageQuery + i);
@@ -148,7 +161,7 @@ export class TradeFetcher {
      * 
      * @returns An array of trades
      */
-    async fetchAllNewTrades(): Promise<Trade[]> {
+    public async fetchAllNewTrades(): Promise<Trade[]> {
         const tradeCount = await this.fetchTradeCount();
         if (tradeCount === null) return [];
         if (this.lastTradeCount === null) {
@@ -174,7 +187,7 @@ export class TradeFetcher {
      * 
      * @returns Array of n trades
      */
-    async fetchLastNTrades(n: number): Promise<Trade[]> {
+    public async fetchLastNTrades(n: number): Promise<Trade[]> {
         const numPages = Math.ceil(n / pageSize);
         const trades: Trade[] = await this.fetchNPages(numPages);
         return trades.slice(0, n);
