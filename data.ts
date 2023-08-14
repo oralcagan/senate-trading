@@ -49,7 +49,6 @@ interface CTTrade {
     _issuerId: number
     txDate: string
     txType: string
-    txTypeExtended: any
     chamber: string
     price: number
     size: number
@@ -116,10 +115,10 @@ export class TradeFetcher {
     }
 
     async fetchTradeCount(): Promise<number | null> {
-        let res = await axios.get(tradesUrl);
+        const res = await axios.get(tradesUrl);
         try {
             //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
-            let rawTradeData = res.data as CTTradeData;
+            const rawTradeData = res.data as CTTradeData;
             return rawTradeData.meta.paging.totalItems
         } catch (err) {
             console.log(err);
@@ -127,14 +126,14 @@ export class TradeFetcher {
         }
     }
 
-    async fetchNPages(n : number) : Promise<Trade[]> {
-        let trades: Trade[] = [];
+    async fetchNPages(n: number): Promise<Trade[]> {
+        const trades: Trade[] = [];
         for (let i = 1; i <= n; i++) {
-            let res = await axios.get(tradesUrl + "&" + pageQuery + i);
+            const res = await axios.get(tradesUrl + "&" + pageQuery + i);
             // zod doesn't work
             //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
-            let rawTradeData = res.data as CTTradeData;
-            let page = rawTradeData.data.map((ctTrade) => {
+            const rawTradeData = res.data as CTTradeData;
+            const page = rawTradeData.data.map((ctTrade) => {
                 return convertCTTradeToTrade(ctTrade)
             });
             trades.push(...page);
@@ -150,18 +149,18 @@ export class TradeFetcher {
      * @returns An array of trades
      */
     async fetchAllNewTrades(): Promise<Trade[]> {
-        let tradeCount = await this.fetchTradeCount();
+        const tradeCount = await this.fetchTradeCount();
         if (tradeCount === null) return [];
         if (this.lastTradeCount === null) {
             this.lastTradeCount = tradeCount;
             return [];
         }
-        let numNewTrades = tradeCount - this.lastTradeCount;
+        const numNewTrades = tradeCount - this.lastTradeCount;
         if (numNewTrades <= 0) {
             return [];
         }
-        let numPages = Math.ceil(numNewTrades / pageSize);
-        let trades: Trade[] = await this.fetchNPages(numPages);
+        const numPages = Math.ceil(numNewTrades / pageSize);
+        const trades: Trade[] = await this.fetchNPages(numPages);
         this.lastTradeCount = tradeCount;
         return trades.slice(0, numNewTrades);
     }
@@ -176,8 +175,8 @@ export class TradeFetcher {
      * @returns Array of n trades
      */
     async fetchLastNTrades(n: number): Promise<Trade[]> {
-        let numPages = Math.ceil(n / pageSize);
-        let trades: Trade[] = await this.fetchNPages(numPages);
+        const numPages = Math.ceil(n / pageSize);
+        const trades: Trade[] = await this.fetchNPages(numPages);
         return trades.slice(0, n);
     }
 }

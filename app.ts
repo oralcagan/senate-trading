@@ -1,8 +1,8 @@
-import { Trade,TradeFetcher } from "./data";
+import { TradeFetcher } from "./data";
 
 async function main() {
-    let fetcher = new TradeFetcher(null);
-    let a = await fetcher.fetchLastNTrades(10);
+    const fetcher = new TradeFetcher(null);
+    const a = await fetcher.fetchLastNTrades(10);
     console.log(a)
 }
 

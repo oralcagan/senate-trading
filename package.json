@@ -4,6 +4,8 @@
   "description": "",
   "main": "build/app.js",
   "scripts": {
+    "fix": "eslint . --ext .ts --fix",
+    "lint": "eslint . --ext .ts",
     "build": "npx tsc",
     "start": "node --es-module-specifier-resolution=node build/app.js"
   },
@@ -14,6 +16,9 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "eslint": "^8.47.0",
     "ts-to-zod": "^3.1.3"
   }
 }
