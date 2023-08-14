@@ -127,6 +127,21 @@ export class TradeFetcher {
         }
     }
 
+    async fetchNPages(n : number) : Promise<Trade[]> {
+        let trades: Trade[] = [];
+        for (let i = 1; i <= n; i++) {
+            let res = await axios.get(tradesUrl + "&" + pageQuery + i);
+            // zod doesn't work
+            //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
+            let rawTradeData = res.data as CTTradeData;
+            let page = rawTradeData.data.map((ctTrade) => {
+                return convertCTTradeToTrade(ctTrade)
+            });
+            trades.push(...page);
+        }
+        return trades;
+    }
+
     /**
      * Fetches all new trades since the last time this function was called.
      * 
@@ -145,18 +160,8 @@ export class TradeFetcher {
         if (numNewTrades <= 0) {
             return [];
         }
-        let trades: Trade[] = [];
         let numPages = Math.ceil(numNewTrades / pageSize);
-        for (let i = 1; i <= numPages; i++) {
-            let res = await axios.get(tradesUrl + "&" + pageQuery + i);
-            // zod doesn't work
-            //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
-            let rawTradeData = res.data as CTTradeData;
-            let tradesPart = rawTradeData.data.map((ctTrade) => {
-                return convertCTTradeToTrade(ctTrade)
-            });
-            trades.push(...tradesPart);
-        }
+        let trades: Trade[] = await this.fetchNPages(numPages);
         this.lastTradeCount = tradeCount;
         return trades.slice(0, numNewTrades);
     }
@@ -171,17 +176,8 @@ export class TradeFetcher {
      * @returns Array of n trades
      */
     async fetchLastNTrades(n: number): Promise<Trade[]> {
-        let trades: Trade[] = [];
         let numPages = Math.ceil(n / pageSize);
-        for (let i = 1; i <= numPages; i++) {
-            let res = await axios.get(tradesUrl + "&" + pageQuery + i);
-            // zod doesn't work
-            //let rawTradeData = await sch.cTTradeDataSchema.parseAsync(res.data) as CTTradeData;
-            let rawTradeData = res.data as CTTradeData;
-            trades = trades.concat(rawTradeData.data.map((ctTrade) => {
-                return convertCTTradeToTrade(ctTrade)
-            }));
-        }
+        let trades: Trade[] = await this.fetchNPages(numPages);
         return trades.slice(0, n);
     }
 }
